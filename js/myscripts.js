@@ -1,16 +1,12 @@
 function initMap() {
     var mapDiv = document.getElementById('map');
     var map = new google.maps.Map(mapDiv, {
-        center: {lat: 44.540, lng: -78.546},
-        zoom: 8
+        center: {lat: 21.0000, lng: 78.0000},
+        zoom: 5
     });
 }
-
-//function initMap() {
-//    var mapDiv = document.getElementById('map');
-//    var map = new google.maps.Map(mapDiv);
-//}
-
+    
+    
 var metroPolitanCities = {
     {"Hyderabad"   : 17.3700, 78.4800}, 
     {"New Delhi"   : 28.6139, 77.2090},
