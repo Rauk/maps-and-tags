@@ -4,6 +4,11 @@ html, body {
 #map {
     min-height: 100%;
     height: 100%;
+    position: relative;
+    width:75%
+}
+#over_map {
+    position: absolute; top: 10px; left: 10px; z-index: 99; 
 }
 .container-full {
   margin: 0 auto;
@@ -25,6 +30,9 @@ html, body {
 }
 
 #pac-input {
+    position: absolute;
+    top:    20px;
+    right:   10px;
     background-color: #fff;
     font-family: Roboto;
     font-size: 15px;
@@ -32,7 +40,8 @@ html, body {
     margin-left: 12px;
     padding: 0 11px 0 13px;
     text-overflow: ellipsis;
-    width: 300px;
+    min-width: 180px;
+    width: 20%;
 }
 
 #pac-input:focus {
@@ -56,4 +65,77 @@ html, body {
 }
 #target {
     width: 345px;
+}
+
+.row {
+    width: 100%;
+    height: 100%;
+    float: left;
+}
+.row-child {
+    float: left;
+    min-width: 25%;
+}
+.row-listing {
+    max-width: 25%;
+    width: 25%;
+}
+.searchList {
+    
+}
+.searchResultsClass {
+    margin-top: 80px;
+    margin-left: 20px;
+    border: 1px solid #000;
+/*    height: 40px;*/
+    
+}
+
+ul {
+    overflow-y:scroll;
+    height: 150px;
+/*    overflow: scroll;*/
+}
+.ui-menu-item {
+    list-style: none    !important;
+}
+.ui-autocomplete {
+    max-height: 100px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+  }
+  /* IE 6 doesn't support max-height
+   * we use height instead, but this forces the menu to always be this tall
+   */
+* html .ui-autocomplete {
+height: 100px;
+}
+
+#ui-id-1 {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+
+}
+
+.ui-menu-item {
+    padding-left: 10px;
 }

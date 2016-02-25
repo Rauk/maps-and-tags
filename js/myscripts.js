@@ -1,3 +1,5 @@
+var tagsList = ["Restaurants", "Banks", "Rivers"];
+
 function initMap() {
     var mapDiv = document.getElementById('map');
     var map = new google.maps.Map(mapDiv, {
@@ -8,7 +10,7 @@ function initMap() {
     // Create the search box and link it to the UI element.
     var input = document.getElementById('pac-input');
     var searchBox = new google.maps.places.SearchBox(input);
-    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+//    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
     // Bias the SearchBox results towards current map's viewport.
     map.addListener('bounds_changed', function() {
@@ -21,11 +23,20 @@ function initMap() {
 
     // Listen for the event fired when the user selects a prediction and retrieve
     // more details for that place.
+    google.maps.event.addListener(map, "click", function(event) {
+        infowindow.close();
+    });
     searchBox.addListener('places_changed', function() {
       var places = searchBox.getPlaces();
-
+        $(".searchResultsClass").show();
       if (places.length == 0) {
-        return;
+          console.log(0, 0);
+          $('#resultSize').text("There are no results to display");
+          return;
+      } else {
+          console.log(places.length, places.length);
+          $('#resultSize').text("There are " + places.length + " results");
+          populateSavedCounties(places);
       }
 
       // Clear out the old markers.
@@ -33,7 +44,7 @@ function initMap() {
         marker.setMap(null);
       });
       markers = [];
-
+        
       // For each place, get the icon, name and location.
       var bounds = new google.maps.LatLngBounds();
       places.forEach(function(place) {
@@ -53,7 +64,7 @@ function initMap() {
         });
         markers.push(marker);
         google.maps.event.addListener(marker, 'click', function() {
-            infowindow.setContent(place.name);
+            infowindow.setContent(place.name, place.formatted_address);
             infowindow.open(map, this);
         });
         if (place.geometry.viewport) {
@@ -88,3 +99,30 @@ function createMarker(place) {
 //    {"Mumbai"      : 18.9750, 72.8258},
 //    {"Bengaluru"   : 12.9667, 77.5667}
 //}
+//function populateSavedCounties(select, data) {
+function populateSavedCounties(data) {
+    var items = [];
+    $.each(data, function (id, option) {
+        items.push('<li>' + option.name + '</li>');
+    });  
+    $("#searchResults").empty();
+    $('#searchResults').append( items.join('') );
+    
+//    select.html(items.join(''));
+}
+$( "#tag-input" ).autocomplete({
+      source: tagsList
+});
+$("#createTag").click(function() {
+    var text = $("#tag-input").val();
+    
+    for(var x = 0; x < tagsList.length; x++){
+        if(tagsList[x].toLowerCase() == text.toLowerCase()) {
+            alert("Tag exists with same name");
+            return;
+        }
+    }
+    tagsList.push(text.charAt(0).toUpperCase() + text.slice(1));
+    console.log(tagsList);
+    
+});
