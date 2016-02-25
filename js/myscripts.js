@@ -1,5 +1,19 @@
 var tagsList = ["Restaurants", "Banks", "Rivers"];
-
+var dictPlaces = {Restaurants : ["hyderabad"], Banks : ["hyderabad", "newdelhi", "kolkata", "chennai", "mumbai", "bengaluru"], Rivers : []};
+var placesInfo = {
+    ChIJETLkmGRdUjoRQgBxB0_ucKk : {pos: [14.1652, 77.8117], marker:null, name: "Prashanthi Nilayam"}
+};// ChIJETLkmGRdUjoRQgBxB0_ucKk
+ var placeTags = {
+     hyderabad : ["Restaurants", "Banks" ],
+     newdelhi : ["Banks"],
+     kolkata : ["Banks"],
+     chennai : ["Banks"],
+     mumbai : ["Banks"],
+     bengaluru : ["Banks"],
+     statebankofmaharashtra : ["Banks"], 
+     ChIJETLkmGRdUjoRQgBxB0_ucKk : ["Banks"]
+ };
+var markersMap = {};
 function initMap() {
     var mapDiv = document.getElementById('map');
     var map = new google.maps.Map(mapDiv, {
@@ -44,27 +58,36 @@ function initMap() {
         marker.setMap(null);
       });
       markers = [];
+      markersMap = {};
         
       // For each place, get the icon, name and location.
       var bounds = new google.maps.LatLngBounds();
       places.forEach(function(place) {
-        var icon = {
-          url: "../img/icon-marker1.png",
-          size: new google.maps.Size(71, 71),
-          origin: new google.maps.Point(0, 0),
-          anchor: new google.maps.Point(17, 34),
-          scaledSize: new google.maps.Size(25, 25)
-        };
-
-        // Create a marker for each place.
-        var marker = new google.maps.Marker({
-            map: map,
-            title: place.name,
-            position: place.geometry.location
-        });
+          var tags;
+          if (placesInfo[place.place_id]) {
+              tags = placeTags[place.place_id].join(", ");
+              tags = "Tags :" + tags;
+          } else {
+              tags = "";
+          }
+          var marker = new google.maps.Marker({
+              map: map,
+              title: place.name,
+              position: place.geometry.location
+          });
         markers.push(marker);
+        markersMap[place.place_id] = marker;
+//        placesInfo[place.place_id].marker = marker;
         google.maps.event.addListener(marker, 'click', function() {
-            infowindow.setContent(place.name, place.formatted_address);
+            
+//            infowindow.setContent(place.name + place.formatted_address);
+            infowindow.setContent(place.name + "\n" + tags);
+            var idStr = "iW_id_" + place.place_id;
+            var str = '<div id="' + idStr + '" class="iW_id_class">' + place.name + '</div>' + 
+                      '<div>' + tags + '</div>' +
+                      '<div id="' + 'a_id_' + place.place_id + '" class="a_id_class" data-id="' + place.place_id + '">' + 'Edit/Create tags' + '<\div>';
+            console.log (str);
+            infowindow.setContent(str);
             infowindow.open(map, this);
         });
         if (place.geometry.viewport) {
@@ -74,8 +97,15 @@ function initMap() {
           bounds.extend(place.geometry.location);
         }
       });
+//        console.log ( markersMap);
       map.fitBounds(bounds);
     });
+//    $(".a_id_class").click(function(ev) {
+//        console.log(ev);
+//    });
+//    $('body').on('click', '.a_id_class', function() {
+//        console.log(ev);
+//    });
 }
 
 function createMarker(place) {
@@ -91,14 +121,7 @@ function createMarker(place) {
     });
   }
     
-//var metroPolitanCities = {
-//    {"Hyderabad"   : 17.3700, 78.4800}, 
-//    {"New Delhi"   : 28.6139, 77.2090},
-//    {"Kolkata"     : 22.5667, 88.3667},
-//    {"Chennai"     : 13.0827, 80.2707},
-//    {"Mumbai"      : 18.9750, 72.8258},
-//    {"Bengaluru"   : 12.9667, 77.5667}
-//}
+
 //function populateSavedCounties(select, data) {
 function populateSavedCounties(data) {
     var items = [];
@@ -113,6 +136,21 @@ function populateSavedCounties(data) {
 $( "#tag-input" ).autocomplete({
       source: tagsList
 });
+$('body').on('click', '.a_id_class', function(ev) {
+    var placeId = $(this).data("id");
+        console.log(ev, $(this).data("id"));
+    $('#myModal').modal()         ;             // initialized with defaults
+    if (placeTags[placeId]) {
+        $('#testArea').val(placeTags[placeId].join(", "));
+    } else {
+        $('#testArea').val("");
+    }
+//$('#testArea').val(placeTags[placeId].join(", "));
+    
+    $('#testArea').data("id", placeId);
+
+    
+    });
 $("#createTag").click(function() {
     var text = $("#tag-input").val();
     
@@ -125,4 +163,34 @@ $("#createTag").click(function() {
     tagsList.push(text.charAt(0).toUpperCase() + text.slice(1));
     console.log(tagsList);
     
+});
+console.log (placesInfo, placeTags, dictPlaces, tagsList, markersMap);
+
+function infoWindowListener() {
+    google.maps.event.addListener(marker, 'click', function() {
+
+    //            infowindow.setContent(place.name + place.formatted_address);
+        infowindow.setContent(place.name + "\n" + tags);
+        var idStr = "id_" + place.id;
+        var str = '<div id="' + idStr + '">' + place.name + '</div>' + 
+                             '<div>' + tags + '</div>';
+        infowindow.setContent(str);
+        infowindow.open(map, this);
+    });
+}
+
+$(".a_id_class").click(function(ev) {
+    console.log(ev);
+});
+//$( "body" ).click(function(ev) {
+//  console.log(ev);
+//});
+$('#myModal').on('shown.bs.modal', function () {
+  
+})
+
+$("#saveTags").click(function() {
+    var textAreaValue = $('#testArea').val();
+    var textAreaDataValue = $('#testArea').data("id");
+    console.log(textAreaValue, textAreaDataValue);
 });

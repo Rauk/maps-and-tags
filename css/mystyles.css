@@ -139,3 +139,6 @@ height: 100px;
 .ui-menu-item {
     padding-left: 10px;
 }
+textarea {
+  resize: none;
+}
