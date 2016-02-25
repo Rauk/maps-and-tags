@@ -16,6 +16,9 @@ function initMap() {
     });
 
     var markers = [];
+    var infowindow;
+    infowindow = new google.maps.InfoWindow();
+
     // Listen for the event fired when the user selects a prediction and retrieve
     // more details for that place.
     searchBox.addListener('places_changed', function() {
@@ -35,7 +38,7 @@ function initMap() {
       var bounds = new google.maps.LatLngBounds();
       places.forEach(function(place) {
         var icon = {
-          url: place.icon,
+          url: "../img/icon-marker1.png",
           size: new google.maps.Size(71, 71),
           origin: new google.maps.Point(0, 0),
           anchor: new google.maps.Point(17, 34),
@@ -43,13 +46,16 @@ function initMap() {
         };
 
         // Create a marker for each place.
-        markers.push(new google.maps.Marker({
-          map: map,
-          icon: icon,
-          title: place.name,
-          position: place.geometry.location
-        }));
-
+        var marker = new google.maps.Marker({
+            map: map,
+            title: place.name,
+            position: place.geometry.location
+        });
+        markers.push(marker);
+        google.maps.event.addListener(marker, 'click', function() {
+            infowindow.setContent(place.name);
+            infowindow.open(map, this);
+        });
         if (place.geometry.viewport) {
           // Only geocodes have viewport.
           bounds.union(place.geometry.viewport);
@@ -60,7 +66,19 @@ function initMap() {
       map.fitBounds(bounds);
     });
 }
-    
+
+function createMarker(place) {
+    var placeLoc = place.geometry.location;
+    var marker = new google.maps.Marker({
+      map: map,
+      position: place.geometry.location
+    });
+
+    google.maps.event.addListener(marker, 'click', function() {
+      infowindow.setContent(place.name);
+      infowindow.open(map, this);
+    });
+  }
     
 //var metroPolitanCities = {
 //    {"Hyderabad"   : 17.3700, 78.4800}, 
