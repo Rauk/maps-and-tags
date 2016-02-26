@@ -1,17 +1,10 @@
 var tagsList = ["Restaurants", "Banks", "Rivers"];
-var dictPlaces = {Restaurants : ["ChIJETLkmGRdUjoRQgBxB0_ucKk"], Banks : ["hyderabad", "newdelhi", "kolkata", "chennai", "mumbai", "bengaluru"], Rivers : []};
+var dictPlaces = {Banks : ["ChIJETLkmGRdUjoRQgBxB0_ucKk"]};
 var placesInfo = {
     ChIJETLkmGRdUjoRQgBxB0_ucKk : {pos: [14.1652, 77.8117], marker:null, name: "Prashanthi Nilayam"}
 };
-var gTextAreaValue;
+var gTextAreaValue, infowindow;
  var placeTags = {
-     hyderabad : ["Restaurants", "Banks" ],
-     newdelhi : ["Banks"],
-     kolkata : ["Banks"],
-     chennai : ["Banks"],
-     mumbai : ["Banks"],
-     bengaluru : ["Banks"],
-     statebankofmaharashtra : ["Banks"], 
      ChIJETLkmGRdUjoRQgBxB0_ucKk : ["Banks"]
  };
 var markersMap = {};
@@ -30,7 +23,7 @@ function initMap() {
     });
 
     var markers = [];
-    var infowindow;
+    
     infowindow = new google.maps.InfoWindow();
 
     // Listen for the event fired when the user selects a prediction and retrieve
@@ -60,13 +53,13 @@ function initMap() {
         // For each place, get the icon, name and location.
         var bounds = new google.maps.LatLngBounds();
         places.forEach(function(place) {
-            var tags;
-            if (placesInfo[place.place_id]) {
-                tags = placeTags[place.place_id].join(", ");
-                tags = "Tags :" + tags;
-            } else {
-                tags = "";
-            }
+//            var tags;
+//            if (placesInfo[place.place_id]) {
+//                tags = placeTags[place.place_id].join(", ");
+//                tags = "Tags :" + tags;
+//            } else {
+//                tags = "";
+//            }
             var marker = new google.maps.Marker({
                 map: map,
                 title: place.name,
@@ -75,18 +68,20 @@ function initMap() {
             markers.push(marker);
             markersMap[place.place_id] = marker;
 //        placesInfo[place.place_id].marker = marker;
-            google.maps.event.addListener(marker, 'click', function() {
-            
-//            infowindow.setContent(place.name + place.formatted_address);
-                infowindow.setContent(place.name + "\n" + tags);
-                var idStr = "iW_id_" + place.place_id;
-                var str = '<div class="iW_id_class">' + place.name + '</div>' + 
-                      '<div id="' + idStr + '" class="iW_id_class">' + tags + '</div>' + 
-                      '<div id="' + 'a_id_' + place.place_id + '" class="a_id_class" data-id="' + place.place_id + '">' + 'Edit/Create tags' + '<\div>';
-                console.log (str);
-                infowindow.setContent(str);
-                infowindow.open(map, this);
-            });
+//            var infowindow = new google.maps.InfoWindow();
+            infoWindowListener(marker, place, map);
+//            google.maps.event.addListener(marker, 'click', function() {
+//            
+////            infowindow.setContent(place.name + place.formatted_address);
+//                infowindow.setContent(place.name + "\n" + tags);
+//                var idStr = "iW_id_" + place.place_id;
+//                var str = '<div class="iW_id_class">' + place.name + '</div>' + 
+//                      '<div id="' + idStr + '" class="iW_id_class">' + tags + '</div>' + 
+//                      '<div id="' + 'a_id_' + place.place_id + '" class="a_id_class" data-id="' + place.place_id + '">' + 'Edit/Create tags' + '<\div>';
+//                console.log (str);
+//                infowindow.setContent(str);
+//                infowindow.open(map, this);
+//            });
             if (place.geometry.viewport) {
             // Only geocodes have viewport.
                 bounds.union(place.geometry.viewport);
@@ -110,8 +105,6 @@ function createMarker(place) {
       infowindow.open(map, this);
     });
   }
-    
-
 //function populateSavedCounties(select, data) {
 function populateSavedCounties(data) {
     var items = [];
@@ -157,14 +150,26 @@ $("#createTag").click(function() {
     
 });
 
-function infoWindowListener() {
+//function infoWindowListener(var marker, var place, var infoWindow, var tags, var map) {
+function infoWindowListener(marker, place, map) {
+    
     google.maps.event.addListener(marker, 'click', function() {
-
-    //            infowindow.setContent(place.name + place.formatted_address);
-        infowindow.setContent(place.name + "\n" + tags);
-        var idStr = "id_" + place.id;
-        var str = '<div id="' + idStr + '">' + place.name + '</div>' + 
-                             '<div>' + tags + '</div>';
+        var tags;
+        if (placesInfo[place.place_id]) {
+            tags = placeTags[place.place_id].join(", ");
+            tags = "Tags :" + tags;
+        } else {
+            tags = "";
+        }
+//            infowindow.setContent(place.name + place.formatted_address);
+//        var infowindow;
+//    infowindow = new google.maps.InfoWindow();
+        
+        var idStr = "iW_id_" + place.place_id;
+        var str = '<div class="iW_id_class">' + place.name + '</div>' + 
+              '<div id="' + idStr + '" class="iW_id_class">' + tags + '</div>' + 
+              '<div id="' + 'a_id_' + place.place_id + '" class="a_id_class" data-id="' + place.place_id + '">' + 'Edit/Create tags' + '<\div>';
+        console.log (str);
         infowindow.setContent(str);
         infowindow.open(map, this);
     });
@@ -186,8 +191,7 @@ $("#saveTags").click(function() {
     console.log(gTextAreaValue);
     var newTag = gTextAreaValue.split(", ");
     for (var i = 0; i < newTag.length; i++) {
-        var str1 = newTag[i].trim().toLowerCase();
-        str1 = str1.charAt(0).toUpperCase() + str1.slice(1);
+        var str1 = newTag[i].trim();
         if (str1.length > 0) {
             var index = dictPlaces[str1].indexOf(textAreaDataValue);
             if (index > -1) {
@@ -198,12 +202,21 @@ $("#saveTags").click(function() {
     }
     
     newTag = textAreaValue.split(", ");
+    placeTags[textAreaDataValue] = []; 
+//    dictPlaces[str1] = [];
     for (var i = 0; i < newTag.length; i++) {
         var str1 = newTag[i].trim().toLowerCase();
         str1 = str1.charAt(0).toUpperCase() + str1.slice(1);
-        dictPlaces[str1] = [];
+        if (dictPlaces[str1] == undefined) {
+            dictPlaces[str1] = [];
+        }
         dictPlaces[str1].push(textAreaDataValue);
+        placeTags[textAreaDataValue].push(str1);
     }
     $("#iW_id_" + textAreaDataValue).text(textAreaValue);
     console.log(textAreaValue, textAreaDataValue);
+    console.log(tagsList);
+    console.log(dictPlaces);
+    console.log(placesInfo);
+    console.log(placeTags);
 });
