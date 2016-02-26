@@ -26,8 +26,6 @@ function initMap() {
     
     infowindow = new google.maps.InfoWindow();
 
-    // Listen for the event fired when the user selects a prediction and retrieve
-    // more details for that place.
     google.maps.event.addListener(map, "click", function(event) {
         infowindow.close();
     });
@@ -53,13 +51,6 @@ function initMap() {
         // For each place, get the icon, name and location.
         var bounds = new google.maps.LatLngBounds();
         places.forEach(function(place) {
-//            var tags;
-//            if (placesInfo[place.place_id]) {
-//                tags = placeTags[place.place_id].join(", ");
-//                tags = "Tags :" + tags;
-//            } else {
-//                tags = "";
-//            }
             var marker = new google.maps.Marker({
                 map: map,
                 title: place.name,
@@ -67,21 +58,7 @@ function initMap() {
             });
             markers.push(marker);
             markersMap[place.place_id] = marker;
-//        placesInfo[place.place_id].marker = marker;
-//            var infowindow = new google.maps.InfoWindow();
             infoWindowListener(marker, place, map);
-//            google.maps.event.addListener(marker, 'click', function() {
-//            
-////            infowindow.setContent(place.name + place.formatted_address);
-//                infowindow.setContent(place.name + "\n" + tags);
-//                var idStr = "iW_id_" + place.place_id;
-//                var str = '<div class="iW_id_class">' + place.name + '</div>' + 
-//                      '<div id="' + idStr + '" class="iW_id_class">' + tags + '</div>' + 
-//                      '<div id="' + 'a_id_' + place.place_id + '" class="a_id_class" data-id="' + place.place_id + '">' + 'Edit/Create tags' + '<\div>';
-//                console.log (str);
-//                infowindow.setContent(str);
-//                infowindow.open(map, this);
-//            });
             if (place.geometry.viewport) {
             // Only geocodes have viewport.
                 bounds.union(place.geometry.viewport);
@@ -131,11 +108,8 @@ $('body').on('click', '.a_id_class', function(ev) {
         $('#testArea').val("");
     }
 //$('#testArea').val(placeTags[placeId].join(", "));
-    
     $('#testArea').data("id", placeId);
-
-    
-    });
+});
 $("#createTag").click(function() {
     var text = $("#tag-input").val();
     
@@ -149,22 +123,16 @@ $("#createTag").click(function() {
     console.log(tagsList);
     
 });
-
-//function infoWindowListener(var marker, var place, var infoWindow, var tags, var map) {
 function infoWindowListener(marker, place, map) {
     
     google.maps.event.addListener(marker, 'click', function() {
         var tags;
-        if (placesInfo[place.place_id]) {
+        if (placeTags[place.place_id]) {
             tags = placeTags[place.place_id].join(", ");
             tags = "Tags :" + tags;
         } else {
             tags = "";
         }
-//            infowindow.setContent(place.name + place.formatted_address);
-//        var infowindow;
-//    infowindow = new google.maps.InfoWindow();
-        
         var idStr = "iW_id_" + place.place_id;
         var str = '<div class="iW_id_class">' + place.name + '</div>' + 
               '<div id="' + idStr + '" class="iW_id_class">' + tags + '</div>' + 
@@ -181,10 +149,6 @@ $(".a_id_class").click(function(ev) {
 //$( "body" ).click(function(ev) {
 //  console.log(ev);
 //});
-$('#myModal').on('shown.bs.modal', function () {
-  
-})
-
 $("#saveTags").click(function() {
     var textAreaValue = $('#testArea').val();
     var textAreaDataValue = $('#testArea').data("id");
@@ -198,7 +162,6 @@ $("#saveTags").click(function() {
                 dictPlaces[str1].splice(index, 1);
             }
         }
-        
     }
     
     newTag = textAreaValue.split(", ");
@@ -214,9 +177,9 @@ $("#saveTags").click(function() {
         placeTags[textAreaDataValue].push(str1);
     }
     $("#iW_id_" + textAreaDataValue).text(textAreaValue);
-    console.log(textAreaValue, textAreaDataValue);
-    console.log(tagsList);
-    console.log(dictPlaces);
-    console.log(placesInfo);
-    console.log(placeTags);
+//    console.log(textAreaValue, textAreaDataValue);
+//    console.log(tagsList);
+//    console.log(dictPlaces);
+//    console.log(placesInfo);
+//    console.log(placeTags);
 });
