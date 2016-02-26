@@ -32,7 +32,7 @@ html, body {
 #pac-input {
     position: absolute;
     top:    20px;
-    right:   10px;
+    right:   50px;
     background-color: #fff;
     font-family: Roboto;
     font-size: 15px;
@@ -87,6 +87,8 @@ html, body {
     margin-top: 80px;
     margin-left: 20px;
     border: 1px solid #000;
+    margin-bottom: 30px;
+    box-shadow: 10px 10px 5px #888888;
 /*    height: 40px;*/
     
 }
@@ -141,4 +143,45 @@ height: 100px;
 }
 textarea {
   resize: none;
+}
+li {
+    list-style:none;
+}
+.dropdown-menu {
+    color: #eeeeee;
+}
+.list-group {
+    margin-bottom: 0 !important;
+}
+#resultSize{
+    margin-left: 35px;
+    margin-top: 5px;
+}
+.btn {
+    margin-left: 25px;
+    margin-right: 20px;
+    
+}
+#tag-input {
+    margin: 10px;
+    border-radius: 5px;
+}
+#statusText {
+    margin: 10px;
+}
+#testArea {
+    width: 100%;
+}
+#editTag {
+    display: none
+}
+.a_id_class {
+    cursor: pointer;
+    font-weight: bolder;
+    font-size: larger;
+    text-decoration: underline;
+}
+.iW_id_class {
+    font-weight: bolder;
+    text-decoration: underline;
 }

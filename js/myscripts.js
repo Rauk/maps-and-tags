@@ -53,13 +53,6 @@ function initMap() {
         // For each place, get the icon, name and location.
         var bounds = new google.maps.LatLngBounds();
         places.forEach(function(place) {
-//            var tags;
-//            if (placesInfo[place.place_id]) {
-//                tags = placeTags[place.place_id].join(", ");
-//                tags = "Tags :" + tags;
-//            } else {
-//                tags = "";
-//            }
             var marker = new google.maps.Marker({
                 map: map,
                 title: place.name,
@@ -67,21 +60,7 @@ function initMap() {
             });
             markers.push(marker);
             markersMap[place.place_id] = marker;
-//        placesInfo[place.place_id].marker = marker;
-//            var infowindow = new google.maps.InfoWindow();
             infoWindowListener(marker, place, map);
-//            google.maps.event.addListener(marker, 'click', function() {
-//            
-////            infowindow.setContent(place.name + place.formatted_address);
-//                infowindow.setContent(place.name + "\n" + tags);
-//                var idStr = "iW_id_" + place.place_id;
-//                var str = '<div class="iW_id_class">' + place.name + '</div>' + 
-//                      '<div id="' + idStr + '" class="iW_id_class">' + tags + '</div>' + 
-//                      '<div id="' + 'a_id_' + place.place_id + '" class="a_id_class" data-id="' + place.place_id + '">' + 'Edit/Create tags' + '<\div>';
-//                console.log (str);
-//                infowindow.setContent(str);
-//                infowindow.open(map, this);
-//            });
             if (place.geometry.viewport) {
             // Only geocodes have viewport.
                 bounds.union(place.geometry.viewport);
@@ -109,7 +88,7 @@ function createMarker(place) {
 function populateSavedCounties(data) {
     var items = [];
     $.each(data, function (id, option) {
-        items.push('<li>' + option.name + '</li>');
+        items.push('<li class="list-group-item">' + option.name + '</li>');
     });  
     $("#searchResults").empty();
     $('#searchResults').append( items.join('') );
@@ -121,7 +100,7 @@ $( "#tag-input" ).autocomplete({
 });
 $('body').on('click', '.a_id_class', function(ev) {
     var placeId = $(this).data("id");
-        console.log(ev, $(this).data("id"));
+//        console.log(ev, $(this).data("id"));
     $('#myModal').modal()         ;             // initialized with defaults
     if (placeTags[placeId]) {
         gTextAreaValue = placeTags[placeId].join(", ");
@@ -137,16 +116,24 @@ $('body').on('click', '.a_id_class', function(ev) {
     
     });
 $("#createTag").click(function() {
-    var text = $("#tag-input").val();
-    
+    var text = $("#tag-input").val().trim();
+    if (text.length == 0) {
+        alert("Empty field");
+            return;
+    }
     for(var x = 0; x < tagsList.length; x++){
         if(tagsList[x].toLowerCase() == text.toLowerCase()) {
             alert("Tag exists with same name");
             return;
         }
     }
-    tagsList.push(text.charAt(0).toUpperCase() + text.slice(1));
+    tagsList.push(text.toLowerCase());
+    $("#tag-input").focus().val("");
     console.log(tagsList);
+    $("#statusText").text("Tag created successfully");
+    setTimeout(function(){
+        $("#statusText").addClass('hide');
+    }, 2000);
     
 });
 
@@ -157,7 +144,7 @@ function infoWindowListener(marker, place, map) {
         var tags;
         if (placesInfo[place.place_id]) {
             tags = placeTags[place.place_id].join(", ");
-            tags = "Tags :" + tags;
+            tags = "Existing Tags : " + tags;
         } else {
             tags = "";
         }
@@ -166,10 +153,10 @@ function infoWindowListener(marker, place, map) {
 //    infowindow = new google.maps.InfoWindow();
         
         var idStr = "iW_id_" + place.place_id;
-        var str = '<div class="iW_id_class">' + place.name + '</div>' + 
+        var str = '<div class="iW_id_class">Name : ' + place.name + '</div>' + 
               '<div id="' + idStr + '" class="iW_id_class">' + tags + '</div>' + 
-              '<div id="' + 'a_id_' + place.place_id + '" class="a_id_class" data-id="' + place.place_id + '">' + 'Edit/Create tags' + '<\div>';
-        console.log (str);
+              '<div id="' + 'a_id_' + place.place_id + '" class="a_id_class" data-id="' + place.place_id + '">' + 'Click to edit tags' + '<\div>';
+//        console.log (str);
         infowindow.setContent(str);
         infowindow.open(map, this);
     });
@@ -181,10 +168,6 @@ $(".a_id_class").click(function(ev) {
 //$( "body" ).click(function(ev) {
 //  console.log(ev);
 //});
-$('#myModal').on('shown.bs.modal', function () {
-  
-})
-
 $("#saveTags").click(function() {
     var textAreaValue = $('#testArea').val();
     var textAreaDataValue = $('#testArea').data("id");
@@ -206,14 +189,14 @@ $("#saveTags").click(function() {
 //    dictPlaces[str1] = [];
     for (var i = 0; i < newTag.length; i++) {
         var str1 = newTag[i].trim().toLowerCase();
-        str1 = str1.charAt(0).toUpperCase() + str1.slice(1);
+        
         if (dictPlaces[str1] == undefined) {
             dictPlaces[str1] = [];
         }
         dictPlaces[str1].push(textAreaDataValue);
         placeTags[textAreaDataValue].push(str1);
     }
-    $("#iW_id_" + textAreaDataValue).text(textAreaValue);
+    $("#iW_id_" + textAreaDataValue).text("Existing Tags : " + textAreaValue);
     console.log(textAreaValue, textAreaDataValue);
     console.log(tagsList);
     console.log(dictPlaces);
