@@ -16,20 +16,12 @@ function initMap() {
         center: {lat: 21.0000, lng: 78.0000},
         zoom: 5
     });
-    
     var input = document.getElementById('pac-input');
     var searchBox = new google.maps.places.SearchBox(input);
-
     map.addListener('bounds_changed', function() {
       searchBox.setBounds(map.getBounds());
     });
-
-    
-    
     infowindow = new google.maps.InfoWindow();
-
-    // Listen for the event fired when the user selects a prediction and retrieve
-    // more details for that place.
     google.maps.event.addListener(map, "click", function(event) {
         infowindow.close();
     });
@@ -44,15 +36,11 @@ function initMap() {
             $('#resultSize').text("There are " + places.length + " results");
             populateSavedCounties(places);
         }
-
-        // Clear out the old markers.
         markers.forEach(function(marker) {
             marker.setMap(null);
         });
         markers = [];
         markersMap = {};
-        
-        // For each place, get the icon, name and location.
         var bounds = new google.maps.LatLngBounds();
         places.forEach(function(place) {
             var marker = new google.maps.Marker({
@@ -73,16 +61,13 @@ function initMap() {
         map.fitBounds(bounds);
     });
 }
-
 function createMarker(place) {
     var placeLoc = place.geometry.location;
     var marker = new google.maps.Marker({
-      map: map,
-      position: place.geometry.location
+        map: map,
+        position: place.geometry.location
     });
-
     google.maps.event.addListener(marker, 'click', function() {
-        
         var tags;
         if (placesInfo[place.place_id]) {
             tags = placeTags[place.place_id].join(", ");
@@ -90,20 +75,14 @@ function createMarker(place) {
         } else {
             tags = "";
         }
-//            infowindow.setContent(place.name + place.formatted_address);
-//        var infowindow;
-//    infowindow = new google.maps.InfoWindow();
-        
         var idStr = "iW_id_" + place.place_id;
         var str = '<div class="iW_id_class">Name : ' + place.name + '</div>' + 
               '<div id="' + idStr + '" class="iW_id_class">' + tags + '</div>' + 
               '<div id="' + 'a_id_' + place.place_id + '" class="a_id_class" data-id="' + place.place_id + '">' + 'Click to edit tags' + '<\div>';
-//        console.log (str);
         infowindow.setContent(str);
         infowindow.open(map, this);
     });
   }
-//function populateSavedCounties(select, data) {
 function populateSavedCounties(data) {
     var items = [];
     $.each(data, function (id, option) {
@@ -111,8 +90,6 @@ function populateSavedCounties(data) {
     });  
     $("#searchResults").empty();
     $('#searchResults').append( items.join('') );
-    
-//    select.html(items.join(''));
 }
 $( "#tag-input" ).autocomplete({
       source: tagsList
@@ -128,12 +105,8 @@ $('body').on('click', '.a_id_class', function(ev) {
         gTextAreaValue = "";
         $('#testArea').val("");
     }
-//$('#testArea').val(placeTags[placeId].join(", "));
-    
     $('#testArea').data("id", placeId);
-
-    
-    });
+});
 $("#createTag").click(function() {
     var text = $("#tag-input").val().trim();
     if (text.length == 0) {
@@ -153,12 +126,9 @@ $("#createTag").click(function() {
     setTimeout(function(){
         $("#statusText").addClass('hide');
     }, 2000);
-    
 });
-
 //function infoWindowListener(var marker, var place, var infoWindow, var tags, var map) {
 function infoWindowListener(marker, place, map) {
-    
     google.maps.event.addListener(marker, 'click', function() {
         var tags;
         if (placesInfo[place.place_id]) {
@@ -167,26 +137,17 @@ function infoWindowListener(marker, place, map) {
         } else {
             tags = "";
         }
-//            infowindow.setContent(place.name + place.formatted_address);
-//        var infowindow;
-//    infowindow = new google.maps.InfoWindow();
-        
         var idStr = "iW_id_" + place.place_id;
         var str = '<div class="iW_id_class">Name : ' + place.name + '</div>' + 
               '<div id="' + idStr + '" class="iW_id_class">' + tags + '</div>' + 
               '<div id="' + 'a_id_' + place.place_id + '" class="a_id_class" data-id="' + place.place_id + '">' + 'Click to edit tags' + '<\div>';
-//        console.log (str);
         infowindow.setContent(str);
         infowindow.open(map, this);
     });
 }
-
 $(".a_id_class").click(function(ev) {
     console.log(ev);
 });
-//$( "body" ).click(function(ev) {
-//  console.log(ev);
-//});
 $("#saveTags").click(function() {
     var textAreaValue = $('#testArea').val();
     var textAreaDataValue = $('#testArea').data("id");
@@ -200,13 +161,10 @@ $("#saveTags").click(function() {
                 dictPlaces[str1].splice(index, 1);
             }
         }
-        
     }
-    
     newTag = textAreaValue.split(", ");
     placeTags[textAreaDataValue] = []; 
     var flag = false;
-//    dictPlaces[str1] = [];
     for (var i = 0; i < newTag.length; i++) {
         var str1 = newTag[i].trim().toLowerCase();
         if (tagsList.indexOf(str1) < 0) {
@@ -226,13 +184,7 @@ $("#saveTags").click(function() {
         placeTags[textAreaDataValue].push(str1);
     }
     $("#iW_id_" + textAreaDataValue).text("Existing Tags : " + textAreaValue);
-    console.log(textAreaValue, textAreaDataValue);
-    console.log(tagsList);
-    console.log(dictPlaces);
-    console.log(placesInfo);
-    console.log(placeTags);
 });
-
 $(document).ready(function () {
     $('#tag-input').on('change', function () {
         console.log(this.value);
@@ -243,9 +195,7 @@ $(document).ready(function () {
         clearMarkers(ui.item.value);
     });
 });
-
 function clearMarkers(tag) {
-  
   setMapOnAll(null);
     if (tag) {
         var listPlaces = dictPlaces[tag];
@@ -256,12 +206,10 @@ function clearMarkers(tag) {
             }  
         } else
             return;
-        
     } else {
         return;
     }
 }
-
 function setMapOnAll(map) {
   for (var i = 0; i < markers.length; i++) {
     markers[i].setMap(map);
@@ -278,17 +226,12 @@ function showMarkers() {
   setMapOnAll(map);
 }
 function initialize(placeId) {
-
     var request = {
         placeId: placeId
     };
-
     var service = new google.maps.places.PlacesService(map);
-
     service.getDetails(request, function (place, status) {
-
         if (status == google.maps.places.PlacesServiceStatus.OK) {
-
             var marker = new google.maps.Marker({
                 map: map,
                 position: place.geometry.location
@@ -300,5 +243,4 @@ function initialize(placeId) {
 }
 $('#editTag').click(function() {
     clearMarkers();
-    
 });
